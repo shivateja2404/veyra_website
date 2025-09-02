@@ -1,4 +1,4 @@
- import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
  
@@ -17,18 +17,16 @@ export const metadata: Metadata = {
   title: "Veyra - Discover, Share, and Shop Your Style",
   description:
     "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",
-  icons: {
-    icon: "/logo.svg.png",
-  },
+  icons: { icon: "/logo.svg.png" },
   openGraph: {
     title: "Veyra - Discover, Share, and Shop Your Style",
     description:
       "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",
-    url: "https://www.veyra.co.in/",
+    url: `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}`,
     siteName: "Veyra",
     images: [
       {
-        url: "https://www.veyra.co.in/preview_image.jpg",
+        url: `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}/preview_image.jpg`,
         width: 1200,
         height: 630,
         alt: "Veyra - Social Commerce Platform",
@@ -44,7 +42,9 @@ export const metadata: Metadata = {
     title: "Veyra - Discover, Share, and Shop Your Style",
     description:
       "Where creators, users, and brands meet — powered by content, commerce, and community.",
-    images: ["https://www.veyra.co.in/preview_image.jpg"],
+    images: [
+      `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}/preview_image.jpg`,
+    ],
   },
   themeColor: "#6366F1",
   applicationName: "Veyra",
@@ -54,6 +54,8 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
 };
+
+
  
 export default function RootLayout({
   children,
