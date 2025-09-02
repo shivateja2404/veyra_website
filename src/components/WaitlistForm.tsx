@@ -46,7 +46,26 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
     }
   }, [isOpen]);
 
- 
+  // Set up real-time subscription to waitlist changes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const channel = supabase
+      .channel('waitlist-changes')
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'waitlist' 
+      }, (payload) => {
+        // Increment the waitlist count when someone new joins
+        setWaitlistCount(prevCount => prevCount + 1);
+      })
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
