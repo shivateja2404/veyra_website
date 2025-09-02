@@ -141,13 +141,11 @@ const GenZCard = ({
         boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
         transition: { duration: 0.3, type: "spring", stiffness: 300 }
       }}
-      className={`group relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br ${gradientClass} 
-        shadow-2xl backdrop-blur-sm border border-white/20 dark:border-white/10
-        before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent
-        hover:before:from-black/5`}
-      style={{
-        transformStyle: 'preserve-3d',
-      }}
+     className={`group relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-br ${gradientClass} 
+    shadow-2xl backdrop-blur-sm border border-white/20 dark:border-white/10
+    before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/10 before:to-transparent
+    hover:before:from-black/5 h-full`}   // <-- add this
+  style={{ transformStyle: 'preserve-3d' }}
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -508,7 +506,7 @@ const Index = () => {
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-semibold"> No cap! 🧢</span>
             </p>
             
-            <div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3">
+<div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3 items-stretch">
               <article>
                 <GenZCard 
                   icon={<Smartphone className="w-6 h-6 sm:w-7 sm:h-7 text-white" />}
