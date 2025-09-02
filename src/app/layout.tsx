@@ -14,11 +14,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Veyra - Social commerce Platform",
+  title: "Veyra - Discover, Share, and Shop Your Style",
   description:
-    "Where creators, users, and brands meet — powered by content, commerce, and community.",
+    "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",
   icons: {
-    icon: "/logo.svg.png", // your new favicon path in public folder
+    icon: "/logo.svg.png",
+  },
+  openGraph: {
+    title: "Veyra - Discover, Share, and Shop Your Style",
+    description:
+      "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",
+    url: "https://www.veyra.co.in/",
+    siteName: "Veyra",
+    images: [
+      {
+        url: "https://www.veyra.co.in/preview_image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Veyra - Social Commerce Platform",
+        type: "image/jpeg",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@veyra",
+    creator: "@veyra",
+    title: "Veyra - Discover, Share, and Shop Your Style",
+    description:
+      "Where creators, users, and brands meet — powered by content, commerce, and community.",
+    images: ["https://www.veyra.co.in/preview_image.jpg"],
+  },
+  themeColor: "#6366F1",
+  applicationName: "Veyra",
+  appleWebApp: {
+    capable: true,
+    title: "Veyra",
+    statusBarStyle: "default",
   },
 };
  
