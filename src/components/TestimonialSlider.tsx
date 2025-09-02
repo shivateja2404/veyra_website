@@ -80,7 +80,7 @@ export const TestimonialSlider: React.FC = () => {
         >
           <div className="flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-full overflow-hidden mb-4">
-              <Image
+              <img
                 src={testimonials[current].avatar}
                 alt={testimonials[current].name}
                 className="w-full h-full object-cover"

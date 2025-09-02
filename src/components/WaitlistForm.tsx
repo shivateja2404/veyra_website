@@ -133,7 +133,7 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
       } catch (error) {
         console.error('Could not get IP address:', error);
       }
-      
+
       // Insert data into Supabase waitlist table
       const { error } = await supabase
         .from('waitlist')
@@ -184,7 +184,7 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
         border border-white/20 shadow-2xl flex flex-col items-center text-center"
       >
         {/* Logo */}
-        <Image
+        <img
           src="/logo.svg.png"
           alt="Veyra Logo"
           className="w-14 h-14 mb-4"
