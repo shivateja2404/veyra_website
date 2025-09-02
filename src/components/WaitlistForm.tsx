@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import Image from 'next/image';
 
 interface WaitlistFormProps {
   isOpen: boolean;
@@ -132,7 +133,7 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
       } catch (error) {
         console.error('Could not get IP address:', error);
       }
-
+      
       // Insert data into Supabase waitlist table
       const { error } = await supabase
         .from('waitlist')
@@ -183,7 +184,7 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
         border border-white/20 shadow-2xl flex flex-col items-center text-center"
       >
         {/* Logo */}
-        <img
+        <Image
           src="/logo.svg.png"
           alt="Veyra Logo"
           className="w-14 h-14 mb-4"

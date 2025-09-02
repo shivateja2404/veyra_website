@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
  
 interface NavItem {
   name: string;
@@ -42,7 +43,7 @@ export const Navbar: React.FC<{ onOpenWaitlist: () => void }> = ({ onOpenWaitlis
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <a href="#" className="flex items-center space-x-2">
-          <img src={'./logo.svg.png'} alt="Veyra Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain" />
+          <Image src={'./logo.svg.png'} alt="Veyra Logo" className="h-8 w-8 md:h-10 md:w-10 object-contain" />
           <span className="text-2xl md:text-3xl font-bold text-foreground font-poppins">Veyra</span>
         </a>
 

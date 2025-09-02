@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface Testimonial {
   id: number;
@@ -79,7 +80,7 @@ export const TestimonialSlider: React.FC = () => {
         >
           <div className="flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-full overflow-hidden mb-4">
-              <img
+              <Image
                 src={testimonials[current].avatar}
                 alt={testimonials[current].name}
                 className="w-full h-full object-cover"

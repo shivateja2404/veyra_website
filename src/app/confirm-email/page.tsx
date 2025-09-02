@@ -5,8 +5,12 @@ import { motion } from 'framer-motion';
 
 export default function ConfirmEmailPage() {
   const [showConfetti, setShowConfetti] = useState(false);
-  const urlParams = new URLSearchParams(window.location.search);
-const accessToken = urlParams.get('access_token');
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+  
+    useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+      setAccessToken(params.get('access_token'));
+    }, []);
 
   useEffect(() => {
     setShowConfetti(true);
