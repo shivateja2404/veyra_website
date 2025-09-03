@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Instagram, Linkedin, Twitter, Smartphone, ShoppingBag, DollarSign, Sparkles, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,103 @@ import { Card, CardContent} from '@/components/ui/card';
 import { getUniqueGradient } from '@/components/ui/ui/card';
 import Link from "next/link";
 
+ 
 
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
+const useMousePosition = (): MousePosition => {
+  const [mousePosition, setMousePosition] = useState<MousePosition>({
+    x: 0,
+    y: 0,
+  });
+
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent): void => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", updateMousePosition);
+    return () => window.removeEventListener("mousemove", updateMousePosition);
+  }, []);
+
+  return mousePosition;
+};
+
+interface FloatingTextProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const FloatingText: React.FC<FloatingTextProps> = ({ children, className }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [elementRef, setElementRef] = useState<HTMLSpanElement | null>(null);
+  const mousePosition = useMousePosition();
+
+  const getRotation = () => {
+    if (!isHovered || !elementRef) return { rotateX: 0, rotateY: 0, z: 0 };
+
+    const rect = elementRef.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // Position relative to center (-1 to 1)
+    const relX = (mousePosition.x - centerX) / (rect.width / 2);
+    const relY = (mousePosition.y - centerY) / (rect.height / 2);
+
+    const clampedX = Math.max(-1, Math.min(1, relX));
+    const clampedY = Math.max(-1, Math.min(1, relY));
+
+    // 🔑 Inverted: the side under cursor dips down
+    const rotateX = clampedY * -10; // top = -10 (dip), bottom = +10
+    const rotateY = clampedX * 10;  // left = +10, right = -10
+
+    // Plate gets "pressed" slightly into Z
+    const z = -5;
+
+    return { rotateX, rotateY, z };
+  };
+
+  const { rotateX, rotateY, z } = getRotation();
+
+  return (
+    <motion.span
+      ref={setElementRef}
+      className={`${className} inline-block cursor-pointer`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      animate={{
+        rotateX,
+        rotateY,
+        z,
+        scale: isHovered ? 1.03 : 1,
+      }}
+      whileTap={{
+        rotateX: rotateX * 1.5,
+        rotateY: rotateY * 1.5,
+        z: z - 5,
+        scale: 1.05,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+        mass: 1,
+      }}
+      style={{
+        transformStyle: "preserve-3d",
+        transformOrigin: "center center",
+        perspective: 800,
+        backfaceVisibility: "hidden",
+        willChange: "transform",
+      }}
+    >
+      {children}
+    </motion.span>
+  );
+};
  const FloatingOrbs = () => {
   const [orbs, setOrbs] = useState<{top: string; left: string; width: number; height: number;}[]>([]);
 
@@ -285,33 +381,40 @@ const Index = () => {
                 ✨ The Future of Social Commerce is Here
               </span>
             </motion.div>
+<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 leading-tight">
+  <motion.div
+    initial={{ opacity: 0, x: -50 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.4, duration: 0.8 }}
+    className="block"
+  >
+    <FloatingText className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+      Discover, Share and
+    </FloatingText>
+  </motion.div>
+  <motion.div
+    initial={{ opacity: 0, x: 50 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.6, duration: 0.8 }}
+    className="block"
+  >
+    <FloatingText className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+      Shop Your Style
+    </FloatingText>
+  </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.8, duration: 0.8 }}
+    className="block"
+  >
+    <FloatingText className="text-white drop-shadow-2xl">
+      Instantly.
+    </FloatingText>
+  </motion.div>
+</h1>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 leading-tight">
-              <motion.span 
-                className="block bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-              >
-                Discover, Share and
-              </motion.span>
-              <motion.span 
-                className="block bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-              >
-                Shop Your Style
-              </motion.span>
-              <motion.span 
-                className="block text-white drop-shadow-2xl"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              >
-                Instantly.
-              </motion.span>
-            </h1>
+
             
             <motion.p 
               className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 text-gray-300 max-w-4xl mx-auto leading-relaxed"
