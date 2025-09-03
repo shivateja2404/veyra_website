@@ -22,11 +22,11 @@ export const metadata: Metadata = {
     title: "Veyra - Discover, Share, and Shop Your Style",
     description:
       "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",
-    url: `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}`,
+    url: `https://www.veyra.co.in`,
     siteName: "Veyra",
     images: [
       {
-        url: `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}/preview_image.jpg`,
+        url: `https://www.veyra.co.in/preview_image.jpg`,
         width: 1200,
         height: 630,
         alt: "Veyra - Social Commerce Platform",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     description:
       "Where creators, users, and brands meet — powered by content, commerce, and community.",
     images: [
-      `https://${process.env.NEXT_PUBLIC_VERCEL_URL || "www.veyra.co.in"}/preview_image.jpg`,
+      `https://www.veyra.co.in/preview_image.jpg`,
     ],
   },
   themeColor: "#6366F1",

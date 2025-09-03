@@ -70,14 +70,25 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) {
-      toast({
-        title: "Error",
-        description: "Please enter your email.",
-        variant: "destructive",
-      });
-      return;
-    }
+         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!email) {
+    toast({
+      title: "Error",
+      description: "Please enter your email.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  if (!emailRegex.test(email)) {
+    toast({
+      title: "Error",
+      description: "Please enter a valid email address.",
+      variant: "destructive",
+    });
+    return;
+  }
 
     if (!name) {
       toast({
