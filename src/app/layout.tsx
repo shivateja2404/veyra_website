@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
  
@@ -46,8 +46,7 @@ export const metadata: Metadata = {
       `https://www.veyra.co.in/preview_image.jpg`,
     ],
   },
-  themeColor: "#6366F1",
-  applicationName: "Veyra",
+   applicationName: "Veyra",
   appleWebApp: {
     capable: true,
     title: "Veyra",
@@ -55,7 +54,9 @@ export const metadata: Metadata = {
   },
 };
 
-
+export const viewport : Viewport = {
+    themeColor: "#6366F1"
+}
  
 export default function RootLayout({
   children,
