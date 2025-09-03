@@ -35,9 +35,7 @@ export const Navbar: React.FC<{ onOpenWaitlist: () => void }> = ({ onOpenWaitlis
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/20 border-b border-white/10 transition-all duration-300 ${
-        isScrolled ? 'py-3 shadow-lg' : 'py-5'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/20 border-b border-white/10 transition-all duration-300 py-3 shadow-lg`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
