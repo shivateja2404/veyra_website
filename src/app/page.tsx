@@ -996,20 +996,27 @@ const Index = () => {
               <span className="text-purple-400 font-medium"> Made with 💜 for Gen Z</span>
             </p>
             <div className="flex space-x-6">
-              <Link 
-                href="/terms-and-conditions" 
-                className="text-sm sm:text-base text-gray-500 hover:text-purple-400 transition-colors duration-300
-                  hover:underline decoration-purple-400 underline-offset-4"
-              >
-                Terms and Conditions
-              </Link>
-              <Link 
-                href="/privacypolicy" 
-                className="text-sm sm:text-base text-gray-500 hover:text-purple-400 transition-colors duration-300
-                  hover:underline decoration-purple-400 underline-offset-4"
-              >
-                Privacy Policy
-              </Link>
+              <Link href="/terms-and-conditions" passHref legacyBehavior>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm sm:text-base text-gray-500 hover:text-purple-400 transition-colors duration-300
+                    hover:underline decoration-purple-400 underline-offset-4"
+                >
+                  Terms and Conditions
+                </a>
+               </Link>
+
+                <Link href="/privacypolicy" passHref legacyBehavior>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm sm:text-base text-gray-500 hover:text-purple-400 transition-colors duration-300
+                      hover:underline decoration-purple-400 underline-offset-4"
+                  >
+                    Privacy Policy
+                  </a>
+                </Link>
             </div>
           </div>
         </div>
