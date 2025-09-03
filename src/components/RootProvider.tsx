@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "../contexts/ThemeContext";
-
+import {SpeedInsights} from '@vercel/speed-insights/next'
 const queryClient = new QueryClient();
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
@@ -19,6 +19,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
             <Toaster />
             <Sonner />
             {children}
+            <SpeedInsights />
             <Analytics />
           </TooltipProvider>
         </ThemeProvider>
