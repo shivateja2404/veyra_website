@@ -67,11 +67,12 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
     };
   }, [isOpen]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // ✅ Validation
   if (!email) {
     toast({
       title: "Error",
@@ -90,101 +91,86 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
     return;
   }
 
-    if (!name) {
-      toast({
-        title: "Error",
-        description: "Please enter your full name.",
-        variant: "destructive",
-      });
-      return;
-    }
+  if (!name) {
+    toast({
+      title: "Error",
+      description: "Please enter your full name.",
+      variant: "destructive",
+    });
+    return;
+  }
 
-    if (isBrand && !brandName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter your brand name.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setLoading(true);
-    
+  if (isBrand && !brandName.trim()) {
+    toast({
+      title: "Error",
+      description: "Please enter your brand name.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // ✅ Get IP address (optional analytics)
+    let ip_address = null;
     try {
-      // Check if email already exists in waitlist
-      const { data: existingUser, error: checkError } = await supabase
-        .from('waitlist')
-        .select('email')
-        .eq('email', email)
-        .maybeSingle();
-      
-      if (checkError) throw checkError;
-      
-      if (existingUser) {
-        // Email already exists in waitlist
-        toast({
-          title: "You're already on the waitlist!",
-          description: "We'll notify you when we launch. Thank you for your interest!",
-        });
-        setLoading(false);
-        setEmail('');
-        setName('');
-        setBrandName('');
-        setIsBrand(false);
-        onClose();
-        return;
-      }
+      const response = await fetch("https://api.ipify.org?format=json");
+      const data = await response.json();
+      ip_address = data.ip;
+    } catch (err) {
+      console.error("Could not get IP address:", err);
+    }
 
-      // Get IP address for analytics purposes
-      let ip_address = null;
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        ip_address = data.ip;
-      } catch (error) {
-        console.error('Could not get IP address:', error);
-      }
+    // ✅ Send to API route (instead of Supabase client)
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        name,
+        brandName,
+        isBrand,
+        ip_address,
+        source: window.location.href,
+      }),
+    });
 
-      // Insert data into Supabase waitlist table
-      const { error } = await supabase
-        .from('waitlist')
-        .insert([
-          {
-            email,
-            full_name: name,
-            brand_name: isBrand ? brandName.trim() : null,
-            is_brand: isBrand,
-            ip_address,
-            source: window.location.href
-          }
-        ]);
-      
-      if (error) throw error;
-      
-      // Increment waitlist count locally (real-time subscription will handle other users)
-      setWaitlistCount(prevCount => prevCount + 1);
-      
+    const result = await res.json();
+
+    if (!result.success) {
+      // Already on waitlist or some handled case
+      toast({
+        title: "Notice",
+        description: result.message,
+      });
+    } else {
+      // Successfully joined
       toast({
         title: "Success!",
         description: "You're officially on the waitlist!",
       });
-      
-      setEmail('');
-      setName('');
-      setBrandName('');
-      setIsBrand(false);
-      onClose();
-    } catch (error) {
-      console.error('Waitlist submission error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to join waitlist. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      setWaitlistCount((prev) => prev + 1);
     }
-  };
+
+    // ✅ Reset form fields
+    setEmail("");
+    setName("");
+    setBrandName("");
+    setIsBrand(false);
+    onClose();
+  } catch (error) {
+    console.error("Waitlist submission error:", error);
+    toast({
+      title: "Error",
+      description: "Failed to join waitlist. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
  return (
