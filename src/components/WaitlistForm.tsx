@@ -23,49 +23,30 @@ export const WaitlistForm: React.FC<WaitlistFormProps> = ({ isOpen, onClose }) =
   const { toast } = useToast();
 
   // Fetch initial waitlist count
-  useEffect(() => {
-    const fetchWaitlistCount = async () => {
-      try {
-        const { count, error } = await supabase
-          .from('waitlist')
-          .select('*', { count: 'exact', head: true });
-        
-        if (error) throw error;
-        
-        // Set count to at least 1000 or actual count + 1000 if higher
-        setWaitlistCount(Math.max(1000, (count || 0) + 1000));
-      } catch (error) {
-        console.error('Error fetching waitlist count:', error);
-        // Default to 1000 if there's an error
+useEffect(() => {
+  const fetchWaitlistCount = async () => {
+    try {
+      const res = await fetch("/api/waitlist-count");
+      const data = await res.json();
+
+      if (data.success) {
+        setWaitlistCount(data.waitlistCount);
+      } else {
         setWaitlistCount(1000);
       }
-    };
-    
-    if (isOpen) {
-      fetchWaitlistCount();
+    } catch (error) {
+      console.error("Error fetching waitlist count:", error);
+      setWaitlistCount(1000);
     }
-  }, [isOpen]);
+  };
 
-  // Set up real-time subscription to waitlist changes
-  useEffect(() => {
-    if (!isOpen) return;
+  if (isOpen) {
+    fetchWaitlistCount();
+  }
+}, [isOpen]);
 
-    const channel = supabase
-      .channel('waitlist-changes')
-      .on('postgres_changes', { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'waitlist' 
-      }, (payload) => {
-        // Increment the waitlist count when someone new joins
-        setWaitlistCount(prevCount => prevCount + 1);
-      })
-      .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [isOpen]);
+
+ 
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
