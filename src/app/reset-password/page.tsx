@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { motion } from 'framer-motion';
+ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react'; // Install lucide-react: npm i lucide-react
 
 export default function ResetPasswordPage() {
@@ -19,31 +18,43 @@ export default function ResetPasswordPage() {
     setAccessToken(params.get('access_token'));
   }, []);
 
-  const handleReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
+const handleReset = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setErrorMsg(null);
 
-    if (password !== confirmPassword) {
-      setErrorMsg("Passwords do not match!");
-      return;
-    }
+  if (password !== confirmPassword) {
+    setErrorMsg("Passwords do not match!");
+    return;
+  }
 
-    if (password.length < 6) {
-      setErrorMsg("Password must be at least 6 characters.");
-      return;
-    }
+  if (password.length < 6) {
+    setErrorMsg("Password must be at least 6 characters.");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) {
-      setErrorMsg(error.message);
+  try {
+    const res = await fetch("/api/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      setErrorMsg(result.message || "Failed to reset password.");
     } else {
       setSuccess(true);
     }
-
+  } catch (err) {
+    setErrorMsg("Something went wrong. Please try again.");
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
   if (!accessToken) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50">
