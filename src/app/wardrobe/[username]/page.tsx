@@ -1,0 +1,93 @@
+// app/wardrobe/[username]/page.tsx - Wardrobe collection share page
+
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { generateMetadata as genMeta } from '@/lib/metadata';
+import SharePage from '@/components/SharePage';
+
+interface PageProps {
+  params: Promise<{ username: string }>;
+  searchParams: Promise<{ ref?: string; r?: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { username } = await params;
+
+  try {
+    // Fetch profile with wardrobe preview columns
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, bio, avatar_url, wardrobe_preview_url, wardrobe_item_count, wardrobe_preview_updated_at')
+      .eq('username', username)
+      .single();
+
+    if (error || !profile) {
+      return { title: 'Wardrobe Not Found - Veyra' };
+    }
+
+    // Determine preview image strategy
+    let previewImage: string;
+    const itemCount = profile.wardrobe_item_count || 0;
+
+    if (itemCount > 0) {
+      // Check if we have a pre-generated preview
+      if (profile.wardrobe_preview_url && profile.wardrobe_preview_updated_at) {
+        // Use pre-generated collage (most efficient)
+        previewImage = profile.wardrobe_preview_url;
+      } else {
+        // Preview needs generation - use API endpoint
+        // API will generate and save to wardrobe_preview_url
+        previewImage = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.veyra.co.in'}/api/wardrobe-preview?username=${username}`;
+      }
+    } else {
+      // Fallback to avatar if no items
+      previewImage = profile.avatar_url || '/preview_image.jpg';
+    }
+
+    return genMeta({
+      title: `${profile.full_name}'s Wardrobe Collection`,
+      description: `Explore ${profile.full_name}'s fashion wardrobe on Veyra - ${itemCount} items • ${profile.bio || 'Fashion & Style'}`,
+      image: previewImage,
+      url: `https://www.veyra.co.in/wardrobe/${username}`,
+      type: 'website',
+    });
+  } catch (error) {
+    return { title: 'Veyra - Fashion & Style' };
+  }
+}
+
+export default async function WardrobeSharePage({ params, searchParams }: PageProps) {
+  const { username } = await params;
+  const search = await searchParams;
+  const referralId = search.ref || search.r;
+
+  try {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .eq('username', username)
+      .single();
+
+    if (error || !profile) {
+      notFound();
+    }
+
+    return (
+      <SharePage
+        contentType="wardrobe"
+        contentId={username}
+        title={`${profile.full_name}'s Wardrobe`}
+        description="Explore this wardrobe collection"
+        imageUrl={profile.avatar_url}
+        referralId={referralId}
+      />
+    );
+  } catch (error) {
+    notFound();
+  }
+}
+
+export const revalidate = 1800;
