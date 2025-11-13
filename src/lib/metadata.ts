@@ -7,7 +7,7 @@ interface MetaTagData {
   description: string;
   image: string;
   url: string;
-  type?: 'website' | 'article' | 'product' | 'video.other' | 'profile';
+  type?: 'website' | 'article' | 'video.other' | 'profile';
   price?: number;
   currency?: string;
 }
@@ -57,15 +57,13 @@ export function generateMetadata(data: MetaTagData): Metadata {
     },
   };
 
-  // Add product-specific tags
-  if (type === 'product' && price) {
-    metadata.openGraph = {
-      ...metadata.openGraph,
-      // @ts-ignore - Next.js types don't include product tags
-      productPrice: {
-        amount: price,
-        currency,
-      },
+  // Add product-specific tags as custom meta tags
+  if (price) {
+    // Add custom product meta tags that social media platforms recognize
+    // Even though Next.js type is 'website', we can add product-specific tags
+    metadata.other = {
+      'product:price:amount': price.toString(),
+      'product:price:currency': currency,
     };
   }
 
