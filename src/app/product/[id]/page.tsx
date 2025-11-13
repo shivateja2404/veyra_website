@@ -44,13 +44,15 @@ export async function generateMetadata({
     return genMeta({
       title: `${product.name} - ₹${displayPrice?.toLocaleString() || 'N/A'}`,
       description:
-        product.description ||
-        `Check out this product on Veyra!`,
+        product.description?.substring(0, 160) ||
+        `Shop ${product.name} on Veyra - India's social commerce platform`,
       image: product.primary_image_url || '/preview_image.jpg',
       url: `https://www.veyra.co.in/product/${id}`,
       type: 'website',
       price: displayPrice,
       currency: 'INR',
+      imageWidth: 1200,
+      imageHeight: 1200,
     });
   } catch (error) {
     console.error('Error generating metadata:', error);

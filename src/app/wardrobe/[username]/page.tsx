@@ -58,12 +58,16 @@ export async function generateMetadata({
       console.log('[Wardrobe Metadata] Using fallback image (no wardrobe items):', previewImage);
     }
 
+    const description = `${profile.display_name}'s wardrobe - ${itemCount} items on Veyra`;
+
     return genMeta({
       title: `${profile.display_name}'s Wardrobe Collection`,
-      description: `Explore ${profile.display_name}'s fashion wardrobe on Veyra - ${itemCount} items • ${profile.bio || 'Fashion & Style'}`,
+      description: description.substring(0, 160),
       image: previewImage,
       url: `https://www.veyra.co.in/wardrobe/${username}`,
       type: 'website',
+      imageWidth: 1200,
+      imageHeight: 630,
     });
   } catch (error) {
     return { title: 'Veyra - Fashion & Style' };

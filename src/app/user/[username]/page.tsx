@@ -1,4 +1,4 @@
-// app/user/[id]/page.tsx - User profile share page with dynamic metadata
+// app/user/[username]/page.tsx - User profile share page with dynamic metadata
 
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -7,21 +7,21 @@ import { generateMetadata as genMeta } from '@/lib/metadata';
 import SharePage from '@/components/SharePage';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ username: string }>;
   searchParams: Promise<{ ref?: string; r?: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  console.log('[User Metadata] Generating metadata for user ID:', id);
+  const { username } = await params;
+  console.log('[User Metadata] Generating metadata for username:', username);
 
   try {
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('username, display_name, bio, avatar_url')
-      .eq('id', id)
+      .eq('username', username)
       .single();
 
     console.log('[User Metadata] Database query result:', { profile, error });
@@ -35,10 +35,12 @@ export async function generateMetadata({
 
     return genMeta({
       title: `${profile.display_name} (@${profile.username}) on Veyra`,
-      description: profile.bio || 'Check out this profile on Veyra!',
+      description: profile.bio?.substring(0, 160) || `Follow ${profile.display_name} on Veyra`,
       image: profile.avatar_url || '/preview_image.jpg',
-      url: `https://www.veyra.co.in/user/${id}`,
+      url: `https://www.veyra.co.in/user/${username}`,
       type: 'profile',
+      imageWidth: 400,
+      imageHeight: 400,
     });
   } catch (error) {
     return { title: 'Veyra - Fashion & Style' };
@@ -46,18 +48,18 @@ export async function generateMetadata({
 }
 
 export default async function UserSharePage({ params, searchParams }: PageProps) {
-  const { id } = await params;
+  const { username } = await params;
   const search = await searchParams;
   const referralId = search.ref || search.r;
 
-  console.log('[User Page] Loading user page for ID:', id);
+  console.log('[User Page] Loading user page for username:', username);
   console.log('[User Page] Referral ID:', referralId);
 
   try {
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('username, display_name, bio, avatar_url')
-      .eq('id', id)
+      .eq('username', username)
       .single();
 
     console.log('[User Page] Database query result:', { profile, error });
@@ -72,7 +74,7 @@ export default async function UserSharePage({ params, searchParams }: PageProps)
     return (
       <SharePage
         contentType="user"
-        contentId={id}
+        contentId={username}
         title={`${profile.display_name} on Veyra`}
         description={profile.bio}
         imageUrl={profile.avatar_url}

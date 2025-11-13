@@ -46,10 +46,12 @@ export async function generateMetadata({
 
     return genMeta({
       title: `${userName}'s Post on Veyra`,
-      description: post.caption || 'Check out this post on Veyra!',
+      description: post.caption?.substring(0, 160) || `See what ${userName} shared on Veyra`,
       image: postMedia,
       url: `https://www.veyra.co.in/post/${id}`,
       type: 'article',
+      imageWidth: 1080,
+      imageHeight: 1080,
     });
   } catch (error) {
     console.error('Error generating metadata:', error);

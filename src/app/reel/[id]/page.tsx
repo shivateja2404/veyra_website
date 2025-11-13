@@ -45,10 +45,12 @@ export async function generateMetadata({
 
     return genMeta({
       title: `${userName}'s Reel on Veyra`,
-      description: reel.caption || 'Watch this reel on Veyra!',
+      description: reel.caption?.substring(0, 160) || `Watch ${userName}'s latest reel on Veyra`,
       image: reelThumbnail,
       url: `https://www.veyra.co.in/reel/${id}`,
       type: 'video.other',
+      imageWidth: 1080,
+      imageHeight: 1920,
     });
   } catch (error) {
     return { title: 'Veyra - Fashion & Style' };
