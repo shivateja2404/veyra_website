@@ -15,34 +15,43 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
+  console.log('[Post Metadata] Generating metadata for post ID:', id);
 
   try {
     const { data: post, error } = await supabase
       .from('posts')
       .select(`
         caption,
-        image_url,
         user_id,
-        profiles!posts_user_id_fkey(username, full_name)
+        profiles!posts_user_id_fkey(username, display_name),
+        post_media(media_url, media_type, display_order)
       `)
       .eq('id', id)
       .single();
 
+    console.log('[Post Metadata] Database query result:', { post, error });
+
     if (error || !post) {
+      console.log('[Post Metadata] Post not found, returning 404 metadata');
       return {
         title: 'Post Not Found - Veyra',
         description: 'This post could not be found.',
       };
     }
 
-    const userName = (post.profiles as any)?.full_name || 'User';
+    console.log('[Post Metadata] Post found, user:', (post.profiles as any)?.display_name);
+
+    const userName = (post.profiles as any)?.display_name || 'User';
+    const postMedia = (post.post_media as any)?.[0]?.media_url || '/preview_image.jpg';
 
     return genMeta({
       title: `${userName}'s Post on Veyra`,
-      description: post.caption || 'Check out this post on Veyra!',
-      image: post.image_url || '/preview_image.jpg',
+      description: post.caption?.substring(0, 160) || `See what ${userName} shared on Veyra`,
+      image: postMedia,
       url: `https://www.veyra.co.in/post/${id}`,
       type: 'article',
+      imageWidth: 1080,
+      imageHeight: 1080,
     });
   } catch (error) {
     console.error('Error generating metadata:', error);
@@ -57,16 +66,26 @@ export default async function PostSharePage({ params, searchParams }: PageProps)
   const search = await searchParams;
   const referralId = search.ref || search.r;
 
+  console.log('[Post Page] Loading post page for ID:', id);
+  console.log('[Post Page] Referral ID:', referralId);
+
   try {
     const { data: post, error } = await supabase
       .from('posts')
-      .select('caption, image_url')
+      .select('caption, post_media(media_url, media_type, display_order)')
       .eq('id', id)
       .single();
 
+    console.log('[Post Page] Database query result:', { post, error });
+
     if (error || !post) {
+      console.log('[Post Page] Post not found, returning 404');
       notFound();
     }
+
+    console.log('[Post Page] Rendering SharePage for post with caption:', post.caption?.substring(0, 50));
+
+    const postMedia = (post.post_media as any)?.[0]?.media_url;
 
     return (
       <SharePage
@@ -74,7 +93,7 @@ export default async function PostSharePage({ params, searchParams }: PageProps)
         contentId={id}
         title="Check out this post on Veyra!"
         description={post.caption}
-        imageUrl={post.image_url}
+        imageUrl={postMedia}
         referralId={referralId}
       />
     );

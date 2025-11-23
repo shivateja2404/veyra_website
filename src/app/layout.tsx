@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.veyra.co.in'),
   title: "Veyra - Discover, Share, and Shop Your Style",
   description:
     "Where creators, users, and brands meet — powered by content, commerce, and community. Join the social commerce revolution with Veyra.",

@@ -30,21 +30,31 @@ export default function SharePage({
     ? `${APP_SCHEME}${contentType}/${contentId}?ref=${referralId}`
     : `${APP_SCHEME}${contentType}/${contentId}`;
 
+  console.log('[SharePage Client] Component loaded:', {
+    contentType,
+    contentId,
+    title,
+    referralId,
+    appUrl
+  });
+
   useEffect(() => {
     let appOpened = false;
     let detectionTimer: NodeJS.Timeout;
 
     // Check for referral parameter and store in sessionStorage
     if (referralId) {
+      console.log('[SharePage Client] Storing referral ID:', referralId);
       sessionStorage.setItem('veyra_ref', referralId);
       // Store in cookie for 30 days
       const expires = new Date();
       expires.setDate(expires.getDate() + 30);
       document.cookie = `veyra_ref=${referralId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      console.log('[SharePage Client] Referral ID stored in sessionStorage and cookie');
     }
 
     const openApp = () => {
-      console.log('Attempting to open app:', appUrl);
+      console.log('[SharePage Client] Attempting to open app:', appUrl);
 
       // Method 1: Direct redirect
       window.location.href = appUrl;
@@ -58,6 +68,7 @@ export default function SharePage({
       setTimeout(() => {
         if (iframe.parentNode) {
           document.body.removeChild(iframe);
+          console.log('[SharePage Client] Cleanup: iframe removed');
         }
       }, 1000);
     };
@@ -66,6 +77,7 @@ export default function SharePage({
       // Detect if app opened (page becomes hidden)
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
+          console.log('[SharePage Client] Page hidden - App likely opened');
           appOpened = true;
           clearTimeout(detectionTimer);
         }
@@ -73,6 +85,7 @@ export default function SharePage({
 
       // Detect if app opened (page loses focus)
       window.addEventListener('blur', () => {
+        console.log('[SharePage Client] Page lost focus - App likely opened');
         appOpened = true;
         clearTimeout(detectionTimer);
       });
@@ -80,7 +93,10 @@ export default function SharePage({
       // Timeout: show fallback if app didn't open
       detectionTimer = setTimeout(() => {
         if (!appOpened) {
+          console.log('[SharePage Client] App did not open - Showing fallback UI');
           setShowFallback(true);
+        } else {
+          console.log('[SharePage Client] App opened successfully');
         }
       }, 2500);
     };
@@ -94,49 +110,61 @@ export default function SharePage({
   }, [appUrl, referralId]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-5 text-white text-center font-sans">
-      <div className="max-w-md w-full animate-fadeIn">
-        <div className="text-6xl font-extrabold mb-5 tracking-tight drop-shadow-lg">
-          Veyra
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 px-4 py-6 sm:p-8 text-white text-center font-sans">
+      <div className="max-w-sm sm:max-w-md w-full animate-fadeIn">
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <img
+            src="/logo.svg.png"
+            alt="Veyra"
+            className="h-16 sm:h-20 w-auto drop-shadow-2xl"
+          />
         </div>
 
         {!showFallback ? (
           <div>
-            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-8"></div>
-            <div className="text-2xl mb-4 font-medium">Opening in app...</div>
-            <div className="text-lg opacity-90">Please wait a moment</div>
+            <div className="w-14 h-14 sm:w-16 sm:h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-6 sm:mb-8"></div>
+            <div className="text-xl sm:text-2xl mb-3 sm:mb-4 font-medium">Opening in app...</div>
+            <div className="text-base sm:text-lg opacity-90">Please wait a moment</div>
           </div>
         ) : (
           <div>
-            <div className="text-2xl mb-4 font-medium">Don&apos;t have the Veyra app?</div>
-            <div className="flex flex-col gap-4 mt-8">
+            <div className="text-xl sm:text-2xl mb-5 sm:mb-6 font-medium px-4">Don&apos;t have the Veyra app?</div>
+            <div className="flex flex-col gap-4 sm:gap-5 mt-6 sm:mt-8 px-4 sm:px-0">
               <a
                 href={appUrl}
-                className="inline-flex items-center justify-center px-10 py-4 bg-white text-indigo-600 rounded-xl font-semibold text-lg transition-all hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0 shadow-xl"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-3 sm:py-4 bg-white hover:bg-gray-100 text-purple-600 rounded-full font-semibold text-base sm:text-lg shadow-2xl hover:shadow-white/50 transform hover:scale-105 transition-all duration-300 w-fit mx-auto"
               >
-                📱 Open in Veyra App
+                Open in App
               </a>
               <a
                 href={process.env.NEXT_PUBLIC_PLAY_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-10 py-4 bg-white/20 text-white rounded-xl font-semibold text-lg transition-all hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0 backdrop-blur-lg shadow-lg"
+                className="inline-flex items-center justify-center transform hover:scale-105 transition-all duration-300"
               >
-                📥 Download for Android
+                <img
+                  src="/GetItOnGooglePlay_Badge_Web_color_English.svg"
+                  alt="Get it on Google Play"
+                  className="h-[52px] sm:h-[60px] w-auto"
+                />
               </a>
               <a
                 href={process.env.NEXT_PUBLIC_APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-10 py-4 bg-white/20 text-white rounded-xl font-semibold text-lg transition-all hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0 backdrop-blur-lg shadow-lg"
+                className="inline-flex items-center justify-center transform hover:scale-105 transition-all duration-300"
               >
-                🍎 Download for iOS
+                <img
+                  src="/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"
+                  alt="Download on the App Store"
+                  className="h-[52px] sm:h-[60px] w-auto"
+                />
               </a>
             </div>
           </div>
         )}
 
-        <div className="mt-12 opacity-70 text-sm">
+        <div className="mt-10 sm:mt-12 opacity-70 text-xs sm:text-sm">
           © 2025 Veyra - Fashion &amp; Style
         </div>
       </div>

@@ -85,6 +85,25 @@ export interface ReferralLink {
   click_count: number;
 }
 
+export interface TryOnHistory {
+  id: string;
+  user_id: string;
+  product_id: string;
+  image_hash: string;
+  garment_image_url: string;
+  result_image_url: string;
+  alphabake_tryon_id?: string;
+  processing_time_ms?: number;
+  garment_type?: string;
+  mode?: string;
+  created_at?: string;
+  updated_at?: string;
+  expires_at?: string;
+  is_deleted?: boolean;
+  share_count?: number;
+  download_count?: number;
+}
+
 // Sharing feature types (from 20250111_sharing_feature_complete.sql)
 export interface SharedLink {
   id: string;
